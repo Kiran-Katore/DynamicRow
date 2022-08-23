@@ -1,0 +1,133 @@
+<!--
+@description       : 
+@author            : Kiran Katore
+@group             : 
+@last modified on  : 08-23-2022
+@last modified by  : Kiran Katore
+-->
+<template>
+    <template if:true={milestoneCreatorFlag}>
+        <lightning-card title="Milestone Creator" icon-name="standard:activations">
+            <div slot="footer">
+                <lightning-button class="slds-p-horizontal_medium" variant="brand" label="Save" title="Save"
+                    onclick={createMilestone}>
+                </lightning-button>
+                <lightning-button class="slds-p-horizontal_medium" variant="default" label="Cancel" title="Cancel"
+                    onclick={cancelMilestone}></lightning-button>
+            </div>
+            <template if:true={isLoading}>
+                <div>
+                    <lightning-spinner alternative-text="Loading" size="large" variant="brand"></lightning-spinner>
+                </div>
+            </template>
+            <!-- Table -->
+            <table class="slds-table slds-table_cell-buffer slds-table_bordered"
+                aria-label="Example default base table of Opportunities">
+                <thead>
+                    <tr class="slds-line-height_reset">
+                        <!-- <th class="" scope="col">
+                            <div class="slds-truncate" title="Sr">Sr. No.</div>
+                        </th> -->
+                        <th class="" scope="col">
+                            <div class="slds-truncate" title="Name">Description</div>
+                        </th>
+                        <th class="" scope="col">
+                            <div class="slds-truncate" title="Percentage">Percentage</div>
+                        </th>
+                        <th class="" scope="col">
+                            <div class="slds-truncate" title="DueDate">Due Date</div>
+                        </th>
+                        <th class="" scope="col">
+                            <div class="slds-truncate" title="Amount">Amount</div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template for:each={milestoneRecList} for:item="milestone" for:index="index">
+                        <tr key={no_of_milestones}>
+                            <!-- <td>
+                                <lightning-input type="text" name="Name" placeholder="Name" id={index} access-key={index} readonly="true"></lightning-input>
+                            </td> -->
+                            <td>
+                                <lightning-input type="text" name="Name" placeholder="Name" id={index}
+                                    access-key={index} onchange={changeHandler} value={milestone.Name}>
+                                </lightning-input>
+                            </td>
+                            <td>
+                                <lightning-input type="number" name="Percentage" step="1" placeholder="Percentage"
+                                    id={index} access-key={index} onchange={changeHandler} value={milestone.Percentage}>
+                                </lightning-input>
+                            </td>
+                            <td>
+                                <lightning-input type="date" name="DueDate" placeholder="Due Date" id={index}
+                                    access-key={index} onchange={changeHandler} value={milestone.DueDate}>
+                                </lightning-input>
+                            </td>
+                            <td>
+                                <lightning-input type="number" name="Amount" formatter="currency" placeholder="Amount"
+                                    id={index} access-key={index} onchange={changeHandler} value={milestone.Amount}
+                                    readonly="true"></lightning-input>
+                            </td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+        </lightning-card>
+    </template>
+    <br />
+    <template if:true={dataTableFlag}>
+        <lightning-card title="Milestone List" icon-name="standard:guidance_center">
+
+            <table class="slds-table slds-table_cell-buffer slds-table_bordered"
+                aria-label="Example default base table of Opportunities">
+                <thead>
+                    <tr class="slds-line-height_reset">
+                        <th class="" scope="col">
+                            <div class="slds-truncate" title="Name">Name</div>
+                        </th>
+                        <th class="" scope="col">
+                            <div class="slds-truncate" title="Percentage">Percentage</div>
+                        </th>
+                        <th class="" scope="col">
+                            <div class="slds-truncate" title="DueDate">Due Date</div>
+                        </th>
+                        <th class="" scope="col">
+                            <div class="slds-truncate" title="Amount">Amount</div>
+                        </th>
+                        <th class="" scope="col">
+                            <div class="slds-truncate" title="Status">Status</div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template for:each={dataTableData} for:item="dt" for:index="index">
+                        <tr class="slds-hint-parent" key={dt.Id}>
+                            <th data-label="Name" scope="row">
+                                <div class="slds-truncate" title="Cloudhub">
+                                    <a href={dt.URL} tabindex="-1">{dt.Name}</a>
+                                </div>
+                            </th>
+                            <td data-label="Confidence">
+                                <div class="slds-truncate" title={dt.VLSF_Milestone_Percentage__c}>
+                                    {dt.Percentage_ROW__c}%</div>
+                            </td>
+                            <td data-label="Close Date">
+                                <div class="slds-truncate" title={dt.VLSF_Milestone_Date__c}>{dt.VLSF_Milestone_Date__c}
+                                </div>
+                            </td>
+                            <td data-label="Amount">
+                                <div class="slds-truncate" title={dt.VLSF_Milestone_Amount__c}>
+                                    {dt.VLSF_Milestone_Amount__c}</div>
+                            </td>
+                            <td data-label="Status">
+                                <div class="slds-truncate" title={dt.Status__c}>
+                                    {dt.Status__c}</div>
+                            </td>
+                            
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+        </lightning-card>
+    </template>
+</template>
