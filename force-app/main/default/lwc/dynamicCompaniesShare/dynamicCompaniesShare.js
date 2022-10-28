@@ -1,68 +1,78 @@
-import { api, LightningElement, track, wire } from 'lwc';
-import milestoneCreate from '@salesforce/apex/Dynamic_milestoneCreator.createMilestone';
-import getMilestones from '@salesforce/apex/Dynamic_milestoneCreator.getData';
-import NO_OF_MILESTONE from '@salesforce/schema/VLSF_Opportunity__c.Payment_Milestone__c';
-import AMOUNT_ROW from '@salesforce/schema/VLSF_Opportunity__c.Amount_ROW__c';
-import MILESTONE_TO_CREATE from '@salesforce/schema/VLSF_Opportunity__c.Milestone_to_Create__c';
-import PO_ID from '@salesforce/schema/VLSF_Opportunity__c.PO_ROW_ID__c';
-//import REMAIN_AMOUNT from '@salesforce/schema/VLSF_Opportunity__c.MilestonesRemailAmount__c';
-import REMAIN_AMOUNT from '@salesforce/schema/VLSF_Opportunity__c.Milestone_Remaining_Amount__c';
-import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import { LightningElement, wire, api, track } from 'lwc';
 import { getRecord, updateRecord } from 'lightning/uiRecordApi';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+//import NO_OF_MILESTONE from '@salesforce/schema/VLSF_Opportunity__c.Payment_Milestone__c';
+import COMPANIES_INVOLVED from '@salesforce/schema/VLSF_Opportunity__c.Companies_Share_To_Create__c';
+import AMOUNT_ROW from '@salesforce/schema/VLSF_Opportunity__c.Amount_ROW__c';
+import createCompanies from '@salesforce/apex/Companies_Share_ROW.createCompanies'
 
-export default class DynamicRowOpportunity extends LightningElement {
+
+export default class DynamicCompaniesShare extends LightningElement {
+
     @api recordId;
     @api isLoading = false;
     @track no_of_milestones = 0;
     record_Amount = 0;
     total_percentage = 0;
-    po_id = null;
-    @track milestoneCreatorFlag = true;
-    @track dataTableFlag = false;
-    @track dataTableData = null;
+    @track CompaniesShareFlag = true;
     @track milestoneRecList = [];
 
 
-    @wire(getMilestones, { recId: '$recordId' })
-    getMilestone({ data, error }) {
-        if (data) {
-            let dataList = [];
-            data.forEach((record) => {
-                let dt = Object.assign({}, record);
-                dt.URL = '/' + dt.Id;
-                dataList.push(dt);
-            });
-            this.dataTableData = dataList;
-            if (this.dataTableData.length > 0) {
-                this.dataTableFlag = true;
+    value = 'Vyom India';
 
-            }
-            console.log('data URL ==> ' + JSON.stringify(this.dataTableData));
-            console.log('data ==> ' + JSON.stringify(data));
-        } else if (error) {
-            console.log('error ==> ' + error);
-        }
+    
+    get options() {
+        return [
+            { label: 'VyomSG', value: 'VyomSG' },
+            { label: 'ITSM', value: 'ITSM' },
+            { label: 'A&A', value: 'A&A' },
+            { label: 'SFRF', value: 'SFRF' },
+            { label: 'IT', value: 'IT' },
+            { label: 'ITIL', value: 'ITIL' },
+            { label: 'Cogniwize', value: 'Cogniwize' },
+            { label: 'DX Sherpa', value: 'DX Sherpa' },
+            { label: 'AE', value: 'AE' },
+            { label: 'Omnepresent', value: 'Omnepresent' },
+            { label: 'DBA', value: 'DBA' },
+            { label: 'ServiceRize', value: 'ServiceRize' },
+            { label: 'Accscient Digital', value: 'Accscient Digital' },
+            { label: 'A2U', value: 'A2U' },
+            { label: 'Appridat', value: 'Appridat' },
+            { label: 'BITB', value: 'BITB' },
+            { label: 'Ellicium', value: 'Ellicium' },
+            { label: 'Emergys', value: 'Emergys' },
+            { label: 'Intra System', value: 'Intra System' },
+            { label: 'MCS', value: 'MCS' },
+            { label: 'Norwin', value: 'Norwin' },
+            { label: 'Ovaledge', value: 'Ovaledge' },
+            { label: 'PDS', value: 'PDS' },
+            { label: 'Premier IT', value: 'Premier IT' },
+        ];
     }
 
-    @wire(getRecord, { recordId: '$recordId', fields: [NO_OF_MILESTONE, AMOUNT_ROW, MILESTONE_TO_CREATE, PO_ID, REMAIN_AMOUNT] })
+
+    @wire(getRecord, { recordId: '$recordId', fields: [COMPANIES_INVOLVED, AMOUNT_ROW] })
     fetchRecord({ data, error }) {
         if (data) {
             this.no_of_milestones = 0;
             this.milestoneRecList = [];
-            console.log(data.fields.Payment_Milestone__c.value);
-            this.no_of_milestones = data.fields.Milestone_to_Create__c.value;
-            this.record_Amount = data.fields.Milestone_Remaining_Amount__c.value;
-            this.po_id = data.fields.PO_ROW_ID__c.value;
+            console.log(data.fields.Companies_Share_To_Create__c.value);
+            this.no_of_milestones = data.fields.Companies_Share_To_Create__c.value;
+            this.record_Amount = data.fields.Amount_ROW__c.value;
+            //this.po_id = data.fields.PO_ROW_ID__c.value;
+            if(this.no_of_milestones < 0){
+                this.no_of_milestones = 0;
+            }
+            console.log('involved =>'+this.no_of_milestones);
             for (let i = 0; i < this.no_of_milestones; i++) {
                 this.milestoneRecList.push({
                     Name: null,
                     Percentage: null,
-                    Amount: null,
-                    DueDate: null
+                    Amount: null
                 });
             }
             if (this.no_of_milestones == 0) {
-                this.milestoneCreatorFlag = false;
+                this.CompaniesShareFlag = false;
                 updateRecord({ fields: { Id: this.recordId } });
             }
             
@@ -72,24 +82,12 @@ export default class DynamicRowOpportunity extends LightningElement {
         }
     }
 
-    // renderedCallback(){
-    //     for(let i=0; i < this.no_of_milestones; i++){
-    //         this.milestoneRecList.push({
-    //             Name:'',
-    //             Percentage:'',
-    //             Amount:'',
-    //             DueDate:''
-    //         });
-    //     }
-    // }
-    saveMilestones() {
-        console.log('Called');
+    showData(){
+        console.log(this.milestoneRecList);
     }
-    cancelMilestone(event) {
-        this.milestoneRecList.pop(event.target.accessKey);
-        console.log('Removed');
-    }
+
     changeHandler(event) {
+        console.log(event.target.name);
         if (event.target.name == 'Name') {
             console.log('Name =' + event.target.value);
             console.log('access Key =' + event.target.accessKey);
@@ -135,7 +133,7 @@ export default class DynamicRowOpportunity extends LightningElement {
             }
         }
     }
-    createMilestone() {
+    createCompaniesShare() {
         this.total_percentage = 0;
 
         for (let i = 0; i < this.milestoneRecList.length; i++) {
@@ -148,47 +146,16 @@ export default class DynamicRowOpportunity extends LightningElement {
             alert('Percentage Exceeded');
         } else {
             if (this.total_percentage < 100) {
-                //confirm("Percentage is Not 100%. Please confirm to Proceed!");
                 let text = "Percentage Should be 100%";
                 alert(text);
-                // if (confirm(text) == true) {
-                //     this.isLoading = !this.isLoading;
-                //     milestoneCreate({ milestoneList: this.milestoneRecList, recordId: this.recordId, poId: this.po_id })
-                //         .then((result) => {
-                //             this.dataTableData = result;
-                //             this.dataTableFlag = true;
-                //             this.isLoading = !this.isLoading;
-                //             console.log('result Call ==>' + JSON.stringify(result));
-                //             console.log('list size:' + result.length);
-                //             //updateRecord({ fields: { Id: this.recordId } });
-                //             window.location.reload();
-                //             this.dispatchEvent(new ShowToastEvent({
-                //                 title: 'SUCCESS!',
-                //                 message: 'Successfully inserted Milestones',
-                //                 variant: 'success'
-                //             }));
-                //         }).catch((err) => {
-                //             console.log('Error' + JSON.stringify(err));
-                //             this.isLoading = !this.isLoading;
-                //             this.dispatchEvent(new ShowToastEvent({
-                //                 title: 'ERROR!',
-                //                 message: 'Error while inserting Milestones: Data Error!',
-                //                 variant: 'error'
-                //             }));
-                //         });
-                // } else {
-                //     console.log('Operation Cancelled!');
-                // }
             } else {
                 this.isLoading = !this.isLoading;
-                milestoneCreate({ milestoneList: this.milestoneRecList, recordId: this.recordId, poId: this.po_id })
+                createCompanies({ cmps: this.milestoneRecList, recordId: this.recordId})
                     .then((result) => {
                         this.dataTableData = result;
-                        this.dataTableFlag = true;
                         this.isLoading = !this.isLoading;
                         console.log('result Call ==>' + JSON.stringify(result));
                         console.log('list size:' + result.length);
-                        //updateRecord({ fields: { Id: this.recordId } });
                         window.location.reload();
                         this.dispatchEvent(new ShowToastEvent({
                             title: 'SUCCESS!',
@@ -210,5 +177,9 @@ export default class DynamicRowOpportunity extends LightningElement {
             console.log('Parameters recordId ==>' + this.recordId);
             console.log('Parameters po_id ==>' + this.po_id);
         }
+    }
+    cancelMilestone(event) {
+        this.milestoneRecList.pop(event.target.accessKey);
+        console.log('Removed');
     }
 }
