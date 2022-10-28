@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Kiran Katore
  * @group             : 
- * @last modified on  : 07-27-2022
+ * @last modified on  : 09-20-2022
  * @last modified by  : Kiran Katore
 **/
 public class Opportunity_handler {
@@ -34,12 +34,6 @@ public class Opportunity_handler {
         //opp.amount_ROW__c = opp.Currency__c +'. '+ opp.amount_ROW__c;
     }
 
-    public void runHandler(){
-
-    }
-    public void updateMilestones(list<VLSF_Opportunity__c> oppList){
-        
-    }
     
     
 }

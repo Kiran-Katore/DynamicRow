@@ -1,0 +1,63 @@
+<!--
+  @description       : 
+  @author            : Kiran Katore
+  @group             : 
+  @last modified on  : 09-20-2022
+  @last modified by  : Kiran Katore
+-->
+<template>
+    <template if:true={CompaniesShareFlag}>
+        <lightning-card title="Comapanies Share" icon-name="standard:activations">
+            <div slot="footer">
+                <lightning-button class="slds-p-horizontal_medium" variant="brand" label="Save" title="Save"
+                    onclick={createCompaniesShare}>
+                </lightning-button>
+                <lightning-button class="slds-p-horizontal_medium" variant="default" label="Cancel" title="Cancel"
+                    onclick={cancelMilestone}></lightning-button>
+            </div>
+            <template if:true={isLoading}>
+                <div>
+                    <lightning-spinner alternative-text="Loading" size="large" variant="brand"></lightning-spinner>
+                </div>
+            </template>
+            <!-- Table -->
+            <table class="slds-table slds-table_cell-buffer slds-table_bordered"
+                aria-label="Example default base table of Opportunities">
+                <thead>
+                    <tr class="slds-line-height_reset">
+                        <th class="" scope="col">
+                            <div class="slds-truncate" title="Name">Business Units</div>
+                        </th>
+                        <th class="" scope="col">
+                            <div class="slds-truncate" title="Percentage">Percentage</div>
+                        </th>
+                        <th class="" scope="col">
+                            <div class="slds-truncate" title="Amount">Amount</div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template for:each={milestoneRecList} for:item="milestone" for:index="index">
+                        <tr key={no_of_milestones}>
+                            <td>
+                                <lightning-combobox id={index} name="Name" access-key={index} value={value}
+                                    placeholder="Name" options={options} onchange={changeHandler}>
+                                </lightning-combobox>
+                            </td>
+                            <td>
+                                <lightning-input type="number" name="Percentage" step="1" placeholder="Percentage"
+                                    id={index} access-key={index} onchange={changeHandler} value={milestone.Percentage}>
+                                </lightning-input>
+                            </td>
+                            <td>
+                                <lightning-input type="number" name="Amount" placeholder="Amount"
+                                    id={index} access-key={index} onchange={changeHandler} value={milestone.Amount}
+                                    readonly="true"></lightning-input>
+                            </td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+        </lightning-card>
+    </template>
+</template>

@@ -2,7 +2,7 @@
 @description       : 
 @author            : Kiran Katore
 @group             : 
-@last modified on  : 08-23-2022
+@last modified on  : 09-20-2022
 @last modified by  : Kiran Katore
 -->
 <template>
@@ -64,7 +64,7 @@
                                 </lightning-input>
                             </td>
                             <td>
-                                <lightning-input type="number" name="Amount" formatter="currency" placeholder="Amount"
+                                <lightning-input type="number" name="Amount" placeholder="Amount"
                                     id={index} access-key={index} onchange={changeHandler} value={milestone.Amount}
                                     readonly="true"></lightning-input>
                             </td>
@@ -109,7 +109,7 @@
                             </th>
                             <td data-label="Confidence">
                                 <div class="slds-truncate" title={dt.VLSF_Milestone_Percentage__c}>
-                                    {dt.Percentage_ROW__c}%</div>
+                                    {dt.VLSF_Milestone_Percentage__c}%</div>
                             </td>
                             <td data-label="Close Date">
                                 <div class="slds-truncate" title={dt.VLSF_Milestone_Date__c}>{dt.VLSF_Milestone_Date__c}
@@ -117,7 +117,7 @@
                             </td>
                             <td data-label="Amount">
                                 <div class="slds-truncate" title={dt.VLSF_Milestone_Amount__c}>
-                                    {dt.VLSF_Milestone_Amount__c}</div>
+                                    {dt.Milestone_Amount_ROW__c}</div>
                             </td>
                             <td data-label="Status">
                                 <div class="slds-truncate" title={dt.Status__c}>
